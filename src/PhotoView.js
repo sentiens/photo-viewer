@@ -31,12 +31,19 @@ export default class PhotoView extends React.Component {
     this.container.appendChild(this.PIXIApp.view);
     PIXI.settings.SCALE_MODE = PIXI.SCALE_MODES.NEAREST;
     this.loadImage();
-    window.addEventListener('resize', () => {
-      this.PIXIApp.renderer.resize(window.innerWidth, window.innerHeight);
-      PhotoView.maxWidth = window.innerWidth * PhotoView.marginRatio;
-      PhotoView.maxHeight = window.innerHeight * PhotoView.marginRatio;
-      this.syncSpriteWithProps();
-    });
+    window.addEventListener('resize', this.handleResize);
+  }
+
+  handleResize = () => {
+    this.PIXIApp.renderer.resize(window.innerWidth, window.innerHeight);
+    PhotoView.maxWidth = window.innerWidth * PhotoView.marginRatio;
+    PhotoView.maxHeight = window.innerHeight * PhotoView.marginRatio;
+    this.syncSpriteWithProps();
+  };
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.handleResize);
+    this.PIXIApp.destroy(true);
   }
 
   syncSpriteWithProps(prevProps) {
